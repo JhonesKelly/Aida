@@ -1,3 +1,3 @@
-const { PythonShell } = require("python-shell");
-
-PythonShell.run("")
+// const { PythonShell } = require("python-shell");
+//
+// PythonShell.run("sxsxs.py")
