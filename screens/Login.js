@@ -8,11 +8,13 @@ import {
   TextInput,
 } from "react-native";
 import { LOGO } from "../src/images";
-
-export default function Login({ navigation }) {
+import Home from "./Home";
+//
+export function Login({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
         return (
+            <View style={styles.container}>
             <><><><View >
                 <Image source={LOGO}
                     style={styles.picture} />
@@ -40,17 +42,27 @@ export default function Login({ navigation }) {
             <Text style={styles.forgot_button}>Забыли пароль?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.loginBtn} >
-            <Text style={styles.loginText}>Войти</Text>
-            </TouchableOpacity>
+                <TouchableOpacity style={styles.loginBtn} onPress={() => navigation.navigate('Record')}>
+                <Text style={styles.loginText}>Войти</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity style={styles.reg_button} onPress={() => navigation.navigate('Registration')}>
-            <Text style={styles.regText}>Зарегистрироваться</Text>
-            </TouchableOpacity></>
+                <TouchableOpacity style={styles.reg_button} onPress={() => navigation.navigate('Registration')}>
+                    <Text style={styles.regText}>Зарегистрироваться</Text>
+                </TouchableOpacity></>
+
+            </View>
+
+
     );
-};
- 
+}
+//
 const styles = StyleSheet.create ({
+    container:{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'black'
+    },
     textEnter: {
       color: 'white',
       fontSize: 36,
@@ -114,3 +126,5 @@ const styles = StyleSheet.create ({
       fontSize: 22,
     },
   });
+
+export default Login;

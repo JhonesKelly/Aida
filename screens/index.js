@@ -1,3 +1,5 @@
-// const { PythonShell } = require("python-shell");
-//
-// PythonShell.run("sxsxs.py")
+'use strict';
+
+import Hamburger from './Humburger';
+
+export default Hamburger;

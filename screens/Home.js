@@ -1,18 +1,92 @@
 import React from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Image, TouchableHighlight} from 'react-native';
 import {SYMBOL} from "../src/images";
+import { StatusBar } from 'expo-status-bar';
+import { Audio } from 'expo-av';
+import * as Sharing from 'expo-sharing';
 
 export function Home({ navigation }) {
+    const [recording, setRecording] = React.useState();
+    const [recordings, setRecordings] = React.useState([]);
+    const [message, setMessage] = React.useState("");
     const buttonClickedHandler = () => {
         console.log('You have been clicked a button!');
+
+        // fetch('http://127.0.0.1:8000/sasha_pisdor/.json')
+        //     .then((response) => response.json())
+        //     .then((responseJson) => {
+        //         return responseJson.movies;
+        //     })
+        //     .catch((error) => {
+        //         console.error(error);
+        //     });
+
     };
+    async function startRecording() {
+        try {
+            const permission = await Audio.requestPermissionsAsync();
+
+            if (permission.status === "granted") {
+                await Audio.setAudioModeAsync({
+                    allowsRecordingIOS: true,
+                    playsInSilentModeIOS: true
+                });
+
+                const { recording } = await Audio.Recording.createAsync(
+                    Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+                );
+
+                setRecording(recording);
+            } else {
+                setMessage("Please grant permission to app to access microphone");
+            }
+        } catch (err) {
+            console.error('Failed to start recording', err);
+        }
+    }
+
+    async function stopRecording() {
+        setRecording(undefined);
+        await recording.stopAndUnloadAsync();
+
+        let updatedRecordings = [...recordings];
+        const { sound, status } = await recording.createNewLoadedSoundAsync();
+        updatedRecordings.push({
+            sound: sound,
+            duration: getDurationFormatted(status.durationMillis),
+            file: recording.getURI()
+        });
+
+        setRecordings(updatedRecordings);
+    }
+
+    function getDurationFormatted(millis) {
+        const minutes = millis / 1000 / 60;
+        const minutesDisplay = Math.floor(minutes);
+        const seconds = Math.round((minutes - minutesDisplay) * 60);
+        const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds;
+        return `${minutesDisplay}:${secondsDisplay}`;
+    }
+
+    function getRecordingLines() {
+        return recordings.map((recordingLine, index) => {
+            return recordingLine.sound.replayAsync()
+        })}
+
     return (
         <View style={styles.screen}>
             <TouchableOpacity
                 style={styles.buttonContainer}
-                onPress={() => navigation.navigate('Details')}
+                onPress={() => navigation.navigate('Menu')}
             >
                 <Text style={styles.buttonText}>RESULT</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.buttonContainer2}
+                onPress={() => navigation.navigate('Menu')}
+
+            >
+                <Text style={styles.buttonText2}>MENU</Text>
             </TouchableOpacity>
             <Image source={SYMBOL} style={styles.picture} />
             <View>
@@ -23,25 +97,26 @@ export function Home({ navigation }) {
                 <View style={{flex: 1, height: 1, backgroundColor: '#4c899a', top: 105,}} />
             </View>
 
-            <TouchableHighlight onPress={() => buttonClickedHandler()}style={styles.parametricButton4}>
+            <TouchableHighlight onPress={() => buttonClickedHandler()} style={styles.parametricButton4}>
                 <Image style={styles.ImageStyle} source={require('./logo_ru_4.png')} />
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={() => buttonClickedHandler()}style={styles.parametricButton2}>
+            <TouchableHighlight onPress={() => getRecordingLines()} style={styles.parametricButton2}>
                 <Image style={styles.ImageStyle} source={require('./logo_ru_5.png')} />
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={() => buttonClickedHandler()}style={styles.parametricButton3}>
+            <TouchableHighlight onPress={() => buttonClickedHandler()} style={styles.parametricButton3}>
                 <Image style={styles.ImageStyle2} source={require('./logo_ru_6.png')} />
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={() => buttonClickedHandler()}style={styles.parametricButton1}>
+            <TouchableHighlight onPress={() => stopRecording()} style={styles.parametricButton1}>
                 <Image style={styles.ImageStyle2} source={require('./logo_ru_7.png')} />
             </TouchableHighlight>
 
             <TouchableOpacity
-                onPress={buttonClickedHandler}
+                onPress={startRecording}
                 style={styles.recButton}>
+
                 <Text style={{width: 200, textAlign: 'center', fontSize: 22,  }}>Жми если готов!</Text>
             </TouchableOpacity>
 
@@ -227,7 +302,7 @@ const styles = StyleSheet.create({
         right: 20,
     },
     buttonContainer: {
-        margin: -97.5,
+        margin: -95,
         top: 680 ,
         left: 190,
         width: 60,
@@ -250,6 +325,32 @@ const styles = StyleSheet.create({
         fontSize: 20,
         width: 70,
         right: 5,
+    },
+    buttonText2: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: '#4c899a',
+        transform: [{ rotate: '270deg'}],
+        fontSize: 20,
+        width: 70,
+        right: 5,
+        bottom:5,
+    },
+    buttonContainer2: {
+        margin: -50,
+        top: 110 ,
+        left: 190,
+        width: 55,
+        height: 100,
+        //justifyContent: 'center',
+        //padding: 10,
+        backgroundColor: 'black',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 20,
+        overflow: "hidden",
+        borderWidth: 2,
+        borderColor: "#4c899a",
     }
 });
 

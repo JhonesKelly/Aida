@@ -8,12 +8,14 @@ import {
   TextInput,
 } from "react-native";
 import { LOGO } from "../src/images";
-
-export default function Registration ({ navigation }) {
+import Login from "./Login";
+//
+export function Registration ({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [age, setAge] = useState('');
         return (
+            <View style={styles.container}>
             <><><><><><View>
                 <Image source={LOGO}
                     style={styles.picture} />
@@ -49,13 +51,20 @@ export default function Registration ({ navigation }) {
                     <Text style={styles.regText}>Зарегистрироваться</Text>
                 </TouchableOpacity></>
                 
-                <TouchableOpacity style={styles.enterBtn}>
+                <TouchableOpacity style={styles.enterBtn} onPress={() => navigation.navigate('Login')}>
                     <Text style={styles.enterText}>Войти</Text>
                 </TouchableOpacity></>
+            </View>
         );
-};
+}
 
 const styles = StyleSheet.create ({
+    container:{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'black'
+    },
     textReg: {
       color: 'white',
       fontSize: 36,
@@ -119,3 +128,5 @@ const styles = StyleSheet.create ({
       fontSize: 22,
     },
   });
+
+export default Registration;
